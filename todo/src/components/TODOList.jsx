@@ -5,7 +5,7 @@ function TODOList({ todos, setTodos }) {
     <ol className="todo_list">
       {todos && todos.length > 0 ? (
         todos?.map((item, index) => (
-          <Item key={index} item={item} setTodos={setTodos} />
+          <Item key={index} item={item} todos={todos} setTodos={setTodos} />
         ))
       ) : (
         <p>Seems lonely in here, what are you up to?</p>
@@ -14,7 +14,7 @@ function TODOList({ todos, setTodos }) {
   );
 }
 
-function Item({ item, setTodos }) {
+function Item({ item, todos, setTodos }) {
   const [editing, setEditing] = React.useState(false);
   const inputRef = React.useRef(null);
   const handleEdit = () => {
@@ -22,9 +22,18 @@ function Item({ item, setTodos }) {
   };
   const handleInpuSubmit = (event) => {
     event.preventDefault();
+
+    // Update localStorage after editing todo
+    const updatedTodos = JSON.stringify(todos);
+    localStorage.setItem("todos", updatedTodos);
+
     setEditing(false);
   };
   const handleInputBlur = (event) => {
+    //  Update localStorage after editing todo
+    const updatedTodos = JSON.stringify(todos);
+    localStorage.setItem("todos", updatedTodos);
+
     setEditing(false);
   };
   React.useEffect(() => {
@@ -55,10 +64,20 @@ function Item({ item, setTodos }) {
           : todo
       )
     );
+
+    // Update localStorage after marking todo as completed
+    const updatedTodos = JSON.stringify(todos);
+    localStorage.setItem("todos", updatedTodos);
   };
 
   const handleDelete = () => {
     setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== item.id));
+
+    //  Update localStorage after deleting todo
+    const updatedTodos = JSON.stringify(
+      todos.filter((todo) => todo.id !== item.id)
+    );
+    localStorage.setItem("todos", updatedTodos);
   };
 
   return (
